@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"database/sql"
+
 	_ "github.com/lib/pq"
 	"github.com/neuroshepherd/rss-aggregator/internal/config"
+	"github.com/neuroshepherd/rss-aggregator/internal/database"
 )
 
 func main() {
@@ -15,7 +18,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	s := &state{config: &cfg}
+	db, err := sql.Open("postgres", cfg.DBURL)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "open database:", err)
+		os.Exit(1)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
+
+	s := &state{db: dbQueries, cfg: &cfg}
 
 	cmds := &commands{
 		handlers: make(map[string]func(*state, command) error),
