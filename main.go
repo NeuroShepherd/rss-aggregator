@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/lib/pq"
 	"github.com/neuroshepherd/rss-aggregator/internal/config"
 )
 
