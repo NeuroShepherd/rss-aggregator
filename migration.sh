@@ -2,4 +2,4 @@
 
 source .env
 cd sql/schema
-goose postgres $POSTGRES_DB up
+goose postgres $POSTGRES_DB $1
