@@ -13,18 +13,28 @@ func main() {
 		fmt.Fprintln(os.Stderr, "read config:", err)
 		os.Exit(1)
 	}
-	fmt.Println(cfg)
 
-	err = cfg.SetUser("kenobi")
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "set user:", err)
+	s := &state{config: &cfg}
+
+	cmds := &commands{
+		handlers: make(map[string]func(*state, command) error),
+	}
+	cmds.register("login", handlerLogin)
+
+	args := os.Args
+	if len(args) < 2 {
+		fmt.Fprintln(os.Stderr, "no command provided")
 		os.Exit(1)
 	}
 
-	cfg, err = config.Read()
+	cmd := command{
+		name: args[1],
+		args: args[2:],
+	}
+
+	err = cmds.run(s, cmd)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "read config:", err)
+		fmt.Fprintln(os.Stderr, "run command:", err)
 		os.Exit(1)
 	}
-	fmt.Println(cfg)
 }
