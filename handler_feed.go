@@ -11,7 +11,7 @@ import (
 	"github.com/neuroshepherd/rss-aggregator/internal/database"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) < 2 {
 		return fmt.Errorf("name and url must be provided")
 	}
@@ -20,11 +20,6 @@ func handlerAddFeed(s *state, cmd command) error {
 
 	if name == "" || url == "" {
 		return fmt.Errorf("name and url must be provided")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("get user: %w", err)
 	}
 
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
@@ -54,4 +49,19 @@ func handlerAddFeed(s *state, cmd command) error {
 	fmt.Printf("Feed created: %+v\n", feed)
 
 	return nil
+}
+
+func middlewareLoggedIn(handler func(s *state, cmd command, user database.User) error) func(*state, command) error {
+	return func(s *state, cmd command) error {
+		if s.cfg.CurrentUserName == "" {
+			return fmt.Errorf("not logged in")
+		}
+
+		user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+		if err != nil {
+			return fmt.Errorf("get user: %w", err)
+		}
+
+		return handler(s, cmd, user)
+	}
 }
