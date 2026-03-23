@@ -30,8 +30,8 @@ func handlerFollow(s *state, cmd command) error {
 		ID:        uuid.New(),
 		UserID:    user.ID,
 		FeedID:    feed.ID,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create feed follow: %w", err)
