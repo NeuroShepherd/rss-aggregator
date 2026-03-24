@@ -1,19 +1,31 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"os"
+	"time"
 )
 
 func handlerAgg(s *state, cmd command) error {
 
-	feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
-	if err != nil {
-		return err
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("must supply a parseable time duration e.g. 2m15s")
 	}
 
-	fmt.Printf("Feed: %+v\n", feed)
+	timeArg, err := time.ParseDuration(cmd.args[0])
+	if err != nil {
+		return fmt.Errorf("invalid time argument: %w", err)
+	}
 
-	return nil
+	ticker := time.NewTicker(timeArg)
+	defer ticker.Stop()
+
+	for ; ; <-ticker.C {
+		fmt.Printf("scraping feeds every %s", timeArg)
+		err = scrapeFeeds(s)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "scrape feeds:", err)
+		}
+	}
 
 }
