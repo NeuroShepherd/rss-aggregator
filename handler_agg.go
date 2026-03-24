@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -23,9 +22,6 @@ func handlerAgg(s *state, cmd command) error {
 	for ; ; <-ticker.C {
 		fmt.Printf("scraping feeds every %s", timeArg)
 		scrapeFeeds(s)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "scrape feeds:", err)
-		}
 	}
 
 }
