@@ -22,7 +22,7 @@ func handlerAgg(s *state, cmd command) error {
 
 	for ; ; <-ticker.C {
 		fmt.Printf("scraping feeds every %s", timeArg)
-		err = scrapeFeeds(s)
+		scrapeFeeds(s)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "scrape feeds:", err)
 		}
