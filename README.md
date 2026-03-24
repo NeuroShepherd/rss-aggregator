@@ -66,6 +66,9 @@ rss-aggregator <args>
 ### Feed Aggregation
 - **`agg <duration>`** - Start the feed aggregator that scrapes feeds at the specified interval (e.g., `2m`, `30s`, `1h30m`)
 
+### Post Browsing
+- **`browse [limit]`** - Show recent posts from feeds you follow (requires login; defaults to `2` posts when `limit` is omitted)
+
 ### Database
 - **`reset`** - Drop and recreate the database, running all migrations
 
